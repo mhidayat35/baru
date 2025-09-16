@@ -194,8 +194,21 @@
             color: #6c757d;
             margin-bottom: 10px;
         }
+        /* Tombol refresh hijau/merah berkedip */
+        .refresh-db-btn.green {
+            background-color: #27ae60 !important;
+            animation: none !important;
+        }
+        .refresh-db-btn.red-blink {
+            background-color: #e74c3c !important;
+            animation: blink-red 1s infinite;
+        }
+        @keyframes blink-red {
+            0% { background-color: #e74c3c; }
+            50% { background-color: #fff; color: #e74c3c; }
+            100% { background-color: #e74c3c; }
+        }
         .refresh-db-btn {
-            background-color: #6c757d;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -375,7 +388,7 @@
             <div class="database-info" id="databaseInfo">
                 Database terakhir diupdate: <span id="lastUpdate">-</span>
             </div>
-            <button class="refresh-db-btn" onclick="refreshDatabase()">
+            <button class="refresh-db-btn" id="refreshDbBtn" onclick="refreshDatabase()">
                 🔄 Refresh Database
             </button>
         </div>
@@ -484,6 +497,20 @@
                     console.log('Database upgraded successfully');
                 };
             });
+        }
+
+        // Fungsi set warna dan animasi tombol refresh database
+        function setRefreshDbButtonState(state) {
+            const btn = document.getElementById('refreshDbBtn');
+            if (!btn) return;
+            btn.classList.remove('green', 'red-blink');
+            if (state === 'green') {
+                btn.classList.add('green');
+                btn.disabled = false;
+            } else if (state === 'red-blink') {
+                btn.classList.add('red-blink');
+                btn.disabled = false;
+            }
         }
         
         // Fungsi untuk menyimpan index ke IndexedDB
@@ -652,7 +679,8 @@
                 const hasValidCache = await loadIndexFromDatabase();
                 
                 if (hasValidCache) {
-                    // Database ditemukan dan valid
+                    setRefreshDbButtonState('green');
+                    
                     document.getElementById('initTitle').textContent = 'Memuat dari Database Lokal';
                     document.getElementById('initSubtext').textContent = 'Menggunakan data yang sudah tersimpan...';
                     
@@ -673,12 +701,16 @@
                     }, 1000);
                     
                 } else {
-                    // Tidak ada cache valid, lakukan indexing penuh
+                    setRefreshDbButtonState('red-blink');
                     document.getElementById('firstTimeNotice').style.display = 'block';
-                    document.getElementById('initTitle').textContent = 'Membangun Database Lokal';
-                    document.getElementById('initSubtext').textContent = 'Ini hanya dilakukan sekali untuk kunjungan pertama...';
-                    
-                    await performFullIndexing();
+                    document.getElementById('initTitle').textContent = 'Database Lokal Belum Ada';
+                    document.getElementById('initSubtext').textContent = 'Silakan klik tombol "Refresh Database" di bawah untuk membangun database lokal.';
+                    // Sembunyikan progress bar karena user harus refresh
+                    document.getElementById('progressFill').style.width = '0%';
+                    document.getElementById('progressText').textContent = 'Database belum tersedia.';
+
+                    // Pastikan overlay tetap tampil & tombol refresh "wajib" ditekan
+                    isSystemReady = false;
                 }
                 
             } catch (error) {
@@ -741,6 +773,7 @@
             setTimeout(() => {
                 document.getElementById('initOverlay').style.display = 'none';
                 isSystemReady = true;
+                setRefreshDbButtonState('green');
                 showSystemStatus(`✅ Sistem siap! Database lokal berisi ${textIndex.size} entri pencarian dari ${availablePDFs.length} file PDF.`);
             }, 1000);
         }
@@ -1147,4 +1180,4 @@
         });
     </script>
 </body>
-                                                                       </html>
+                </html>
