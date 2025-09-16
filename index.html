@@ -666,62 +666,64 @@
         }
         
         // Fungsi untuk inisialisasi sistem
-        async function initializeSystem() {
-            try {
-                console.log('Initializing system...');
-                
-                // Buka database
-                updateProgress(5, 'Membuka database lokal...');
-                await openDatabase();
-                
-                // Coba load dari database
-                updateProgress(10, 'Memeriksa database lokal...');
-                const hasValidCache = await loadIndexFromDatabase();
-                
-                if (hasValidCache) {
-                    setRefreshDbButtonState('green');
-                    
-                    document.getElementById('initTitle').textContent = 'Memuat dari Database Lokal';
-                    document.getElementById('initSubtext').textContent = 'Menggunakan data yang sudah tersimpan...';
-                    
-                    updateProgress(50, 'Memuat data CSV...');
-                    await loadCSVData();
-                    
-                    updateProgress(90, 'Mempersiapkan sistem...');
-                    
-                    // Simulasi loading untuk UX yang lebih baik
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    updateProgress(100, 'Sistem siap!');
-                    
-                    setTimeout(() => {
-                        document.getElementById('initOverlay').style.display = 'none';
-                        isSystemReady = true;
-                        showSystemStatus(`⚡ Sistem siap! Menggunakan database lokal dengan ${textIndex.size} entri pencarian.`, 'cached');
-                    }, 1000);
-                    
-                } else {
-                    setRefreshDbButtonState('red-blink');
-                    document.getElementById('firstTimeNotice').style.display = 'block';
-                    document.getElementById('initTitle').textContent = 'Database Lokal Belum Ada';
-                    document.getElementById('initSubtext').textContent = 'Silakan klik tombol "Refresh Database" di bawah untuk membangun database lokal.';
-                    // Sembunyikan progress bar karena user harus refresh
-                    document.getElementById('progressFill').style.width = '0%';
-                    document.getElementById('progressText').textContent = 'Database belum tersedia.';
+async function initializeSystem() {
+    try {
+        console.log('Initializing system...');
 
-                    // Pastikan overlay tetap tampil & tombol refresh "wajib" ditekan
-                    isSystemReady = false;
-                }
-                
-            } catch (error) {
-                console.error('Error during initialization:', error);
-                updateProgress(100, 'Error inisialisasi');
-                setTimeout(() => {
-                    document.getElementById('initOverlay').style.display = 'none';
-                    showSystemStatus('❌ Terjadi error saat inisialisasi. Beberapa fitur mungkin tidak berfungsi optimal.', 'error');
-                }, 2000);
-            }
+        // Buka database
+        updateProgress(5, 'Membuka database lokal...');
+        await openDatabase();
+
+        // Coba load dari database
+        updateProgress(10, 'Memeriksa database lokal...');
+        const hasValidCache = await loadIndexFromDatabase();
+
+        if (hasValidCache) {
+            setRefreshDbButtonState('green');
+
+            document.getElementById('initTitle').textContent = 'Memuat dari Database Lokal';
+            document.getElementById('initSubtext').textContent = 'Menggunakan data yang sudah tersimpan...';
+
+            updateProgress(50, 'Memuat data CSV...');
+            await loadCSVData();
+
+            updateProgress(90, 'Mempersiapkan sistem...');
+
+            // Simulasi loading untuk UX yang lebih baik
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            updateProgress(100, 'Sistem siap!');
+
+            setTimeout(() => {
+                document.getElementById('initOverlay').style.display = 'none';
+                isSystemReady = true;
+                showSystemStatus(`⚡ Sistem siap! Menggunakan database lokal dengan ${textIndex.size} entri pencarian.`, 'cached');
+            }, 1000);
+
+        } else {
+            // Langsung refresh/indexing otomatis jika database belum ada
+            setRefreshDbButtonState('red-blink');
+            document.getElementById('firstTimeNotice').style.display = 'block';
+            document.getElementById('initTitle').textContent = 'Membangun Database Lokal';
+            document.getElementById('initSubtext').textContent = 'Proses indexing otomatis, mohon tunggu...';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = 'Memulai indexing otomatis...';
+
+            isSystemReady = false;
+
+            // Jalankan indexing penuh secara otomatis
+            await performFullIndexing();
         }
+
+    } catch (error) {
+        console.error('Error during initialization:', error);
+        updateProgress(100, 'Error inisialisasi');
+        setTimeout(() => {
+            document.getElementById('initOverlay').style.display = 'none';
+            showSystemStatus('❌ Terjadi error saat inisialisasi. Beberapa fitur mungkin tidak berfungsi optimal.', 'error');
+        }, 2000);
+    }
+}
         
         // Fungsi untuk melakukan indexing penuh
         async function performFullIndexing() {
@@ -1183,4 +1185,4 @@
       @TELWBO<br>emaile mas tamam.com
     </footer>
 </body>
-                </html>
+            </html>
