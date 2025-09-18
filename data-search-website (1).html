@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA VKRN ULP WONOSOBO (4500)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 25%, #45B7D1 50%, #96CEB4 75%, #FFECD2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .header:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #45B7D1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 3s ease-in-out infinite;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .admin-btn {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 2px solid rgba(231, 76, 60, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            background: rgba(192, 57, 43, 0.2);
+            border-color: rgba(192, 57, 43, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn-header {
+            background: linear-gradient(135deg, #FF9500, #FF6B00);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(255, 149, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .refresh-btn-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .refresh-btn-header:hover::before {
+            left: 100%;
+        }
+
+        .refresh-btn-header:hover {
+            background: linear-gradient(135deg, #FF6B00, #FF4500);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.4);
+        }
+
+        .refresh-btn-header.ready {
+            background: linear-gradient(135deg, #00C851, #00A852);
+            box-shadow: 0 8px 15px rgba(0, 200, 81, 0.3);
+        }
+
+        .refresh-btn-header.ready:hover {
+            background: linear-gradient(135deg, #00A852, #007E33);
+            box-shadow: 0 12px 25px rgba(0, 168, 82, 0.4);
+        }
+
+        .search-status {
+            text-align: center;
+            margin-top: 2px;
+            color: #00C851;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .search-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 24px;
+            border: 3px solid transparent;
+            background: linear-gradient(white, white) padding-box, 
+                       linear-gradient(135deg, #FF6B6B, #4ECDC4) border-box;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: linear-gradient(white, white) padding-box, 
+                       linear-gradient(135deg, #45B7D1, #96CEB4) border-box;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(69, 183, 209, 0.3);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .search-btn:hover::before {
+            left: 100%;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #5a67d8, #6c5ce7);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(90, 103, 216, 0.4);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .indexing-status {
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #FFF3CD, #FFF8E1);
+            border: 2px solid #FFE082;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #F57F17;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(245, 127, 23, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        .results-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            width: 200px;
+        }
+
+        .show-pdf-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .show-pdf-btn:hover {
+            background: #219a52;
+        }
+
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .admin-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .close-admin {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .file-upload {
+            margin-bottom: 20px;
+        }
+
+        .file-upload input[type="file"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .upload-btn, .delete-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+        }
+
+        .file-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .floating-up {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 22px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: none;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .floating-up:hover {
+            background: linear-gradient(135deg, #5a67d8, #6c5ce7);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(90, 103, 216, 0.5);
+        }
+
+        .pdf-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+        }
+
+        .pdf-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pdf-frame {
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .close-pdf {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 2001;
+        }
+
+        .footer {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .footer-admin {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 2px solid rgba(231, 76, 60, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .footer-admin:hover {
+            background: rgba(192, 57, 43, 0.2);
+            border-color: rgba(192, 57, 43, 0.5);
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 3000;
+        }
+
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .popup-content h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .popup-content p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .popup-ok-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .popup-ok-btn:hover {
+            background: #5a67d8;
+        }
+
+        .login-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 4000;
+        }
+
+        .login-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .show-password {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .show-password input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .login-btn {
+            flex: 1;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #5a67d8;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+
+            .footer-admin {
+                position: static;
+                transform: none;
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+
+            .footer-admin:hover {
+                transform: translateY(-2px);
+            }
+
+            .footer-text {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DATA VKRN ULP WONOSOBO (4500)</h1>
+            <div class="header-controls">
+                <button id="refreshBtn" class="refresh-btn-header" onclick="refreshData()">Refresh Data</button>
+                <div id="searchStatus" class="search-status">Pencarian sudah siap</div>
+            </div>
+        </div>
+
+        <div id="indexingStatus" class="indexing-status">
+            Melakukan indexing data... Harap tunggu.
+        </div>
+
+        <div class="search-section">
+            <div id="searchForm" class="search-form">
+                <input type="text" id="searchInput" class="search-input" placeholder="Masukkan kata kunci pencarian...">
+                <button id="searchBtn" class="search-btn" onclick="performSearch()">Cari</button>
+            </div>
+        </div>
+
+        <div id="resultsSection" class="results-section">
+            <h3>Hasil Pencarian</h3>
+            <div id="resultsContainer"></div>
+        </div>
+
+        <div class="footer">
+            <button class="footer-admin" onclick="openAdmin()">TELWBO</button>
+            <div class="footer-text">emailemaatamam.com 2024</div>
+        </div>
+    </div>
+
+    <button class="floating-up" id="floatingUp" onclick="scrollToTop()">↑</button>
+
+    <!-- Popup No Results -->
+    <div id="noResultsPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Data tidak ada</h3>
+            <p>Apakah data sudah benar?</p>
+            <button class="popup-ok-btn" onclick="closePopup()">OK</button>
+        </div>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="loginPanel" class="login-panel">
+        <div class="login-content">
+            <div class="login-header">
+                <h2>Login Admin</h2>
+            </div>
+            
+            <div class="login-form">
+                <input type="text" id="username" class="login-input" placeholder="Username" autocomplete="username">
+                <div class="password-container">
+                    <input type="password" id="password" class="login-input" placeholder="Password" autocomplete="current-password">
+                    <div class="show-password">
+                        <input type="checkbox" id="showPassword" onchange="togglePassword()">
+                        <label for="showPassword">Tampilkan Password</label>
+                    </div>
+                </div>
+                <div class="error-message" id="errorMessage">Username atau password salah!</div>
+            </div>
+            
+            <div class="login-buttons">
+                <button class="login-btn" onclick="attemptLogin()">Login</button>
+                <button class="cancel-btn" onclick="closeLogin()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-content">
+            <div class="admin-header">
+                <h2>Panel Admin</h2>
+                <button class="close-admin" onclick="closeAdmin()">Tutup</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchTab('csv')">Data CSV</button>
+                <button class="admin-tab" onclick="switchTab('pdf')">Data PDF</button>
+            </div>
+
+            <div id="csvTab" class="tab-content active">
+                <div class="file-upload">
+                    <h3>Upload File CSV</h3>
+                    <input type="file" id="csvFileInput" accept=".csv" multiple>
+                    <button class="upload-btn" onclick="uploadFiles('csv')">Upload CSV</button>
+                </div>
+                <div class="file-list" id="csvFileList">
+                    <p>Tidak ada file CSV</p>
+                </div>
+            </div>
+
+            <div id="pdfTab" class="tab-content">
+                <div class="file-upload">
+                    <h3>Upload File PDF</h3>
+                    <input type="file" id="pdfFileInput" accept=".pdf" multiple>
+                    <button class="upload-btn" onclick="uploadFiles('pdf')">Upload PDF</button>
+                </div>
+                <div class="file-list" id="pdfFileList">
+                    <p>Tidak ada file PDF</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer -->
+    <div id="pdfViewer" class="pdf-viewer">
+        <button class="close-pdf" onclick="closePDF()">Tutup</button>
+        <div class="pdf-content">
+            <iframe id="pdfFrame" class="pdf-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let csvData = [];
+        let csvFiles = {};
+        let pdfFiles = {};
+        let isIndexed = false;
+        let currentResults = [];
+        let isAdminLoggedIn = false;
+
+        // Initialize on page load
+        window.onload = function() {
+            if (!isIndexed) {
+                performIndexing();
+            }
+            
+            // Show floating up button on scroll
+            window.addEventListener('scroll', function() {
+                const floatingUp = document.getElementById('floatingUp');
+                if (window.scrollY > 300) {
+                    floatingUp.style.display = 'block';
+                } else {
+                    floatingUp.style.display = 'none';
+                }
+            });
+        };
+
+        // Simulate indexing process
+        function performIndexing() {
+            const statusEl = document.getElementById('indexingStatus');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const searchStatus = document.getElementById('searchStatus');
+            
+            statusEl.innerHTML = 'Melakukan indexing data... Harap tunggu.';
+            statusEl.style.display = 'block';
+            
+            // Reset button and status
+            refreshBtn.classList.remove('ready');
+            searchStatus.style.display = 'none';
+
+            // Simulate indexing delay
+            setTimeout(() => {
+                // Create sample CSV data for demonstration
+                csvData = [
+                    {
+                        'No': '1',
+                        'Nama Program': 'Program Pembangunan Jalan',
+                        'Kode': 'PBJ001',
+                        'Anggaran': 'Rp 500.000.000',
+                        'Status': 'Aktif',
+                        'Tahun': '2024',
+                        'Lokasi': 'Wonosobo Kota'
+                    },
+                    {
+                        'No': '2',
+                        'Nama Program': 'Renovasi Sekolah Dasar',
+                        'Kode': 'RSD002',
+                        'Anggaran': 'Rp 250.000.000',
+                        'Status': 'Selesai',
+                        'Tahun': '2024',
+                        'Lokasi': 'Kecamatan Wonosobo'
+                    },
+                    {
+                        'No': '3',
+                        'Nama Program': 'Pembangunan Puskesmas',
+                        'Kode': 'PKM003',
+                        'Anggaran': 'Rp 750.000.000',
+                        'Status': 'Proses',
+                        'Tahun': '2024',
+                        'Lokasi': 'Kecamatan Kalibawang'
+                    }
+                ];
+
+                isIndexed = true;
+                statusEl.style.display = 'none';
+                
+                // Update button appearance and show status
+                refreshBtn.classList.add('ready');
+                searchStatus.style.display = 'block';
+                
+                // Enable search
+                document.getElementById('searchInput').disabled = false;
+                document.getElementById('searchBtn').disabled = false;
+            }, 2000);
+        }
+
+        // Refresh data (re-index)
+        function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            const searchStatus = document.getElementById('searchStatus');
+            
+            isIndexed = false;
+            csvData = [];
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('searchBtn').textContent = 'Cari';
+            document.getElementById('searchForm').style.display = 'flex';
+            
+            // Reset button appearance and hide status
+            refreshBtn.classList.remove('ready');
+            searchStatus.style.display = 'none';
+            
+            performIndexing();
+        }
+
+        // Perform search
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const searchForm = document.getElementById('searchForm');
+
+            const query = searchInput.value.toLowerCase().trim();
+            
+            if (!query) {
+                alert('Silakan masukkan kata kunci pencarian');
+                return;
+            }
+
+            // Hide search form and show results
+            searchForm.style.display = 'none';
+            searchBtn.textContent = 'Cari Lagi';
+            resultsSection.style.display = 'block';
+
+            // Filter data based on search query
+            currentResults = csvData.filter(row => {
+                return Object.values(row).some(value => 
+                    value.toString().toLowerCase().includes(query)
+                );
+            });
+
+            displayResults(currentResults);
+        }
+
+        // Display search results
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (results.length === 0) {
+                // Show popup instead of inline message
+                document.getElementById('noResultsPopup').style.display = 'block';
+                // Hide results section
+                document.getElementById('resultsSection').style.display = 'none';
+                // Reset search form
+                document.getElementById('searchForm').style.display = 'flex';
+                document.getElementById('searchBtn').textContent = 'Cari';
+                return;
+            }
+
+            let html = '';
+            results.forEach((result, index) => {
+                html += '<table class="results-table">';
+                html += '<tr><th colspan="2">Data ' + (index + 1) + '</th></tr>';
+                
+                Object.keys(result).forEach(key => {
+                    html += `<tr><th>${key}</th><td>${result[key]}</td></tr>`;
+                });
+                
+                html += '<tr><td colspan="2"><button class="show-pdf-btn" onclick="showPDF(\'' + result['Kode'] + '\')">Tampilkan Program</button></td></tr>';
+                html += '</table><br>';
+            });
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // Show PDF
+        function showPDF(code) {
+            // In a real implementation, you would match the code with actual PDF files
+            const pdfViewer = document.getElementById('pdfViewer');
+            const pdfFrame = document.getElementById('pdfFrame');
+            
+            // For demonstration, show a placeholder
+            pdfFrame.src = 'data:text/html,<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:24px;color:#666;">PDF untuk kode: ' + code + '<br><br>Dalam implementasi nyata, ini akan menampilkan file PDF yang sesuai.</div>';
+            
+            pdfViewer.style.display = 'block';
+        }
+
+        // Close PDF viewer
+        function closePDF() {
+            document.getElementById('pdfViewer').style.display = 'none';
+        }
+
+        // Admin panel functions
+        function openAdmin() {
+            if (!isAdminLoggedIn) {
+                // Show login panel
+                document.getElementById('loginPanel').style.display = 'block';
+                // Clear previous inputs
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                // Already logged in, show admin panel directly
+                showAdminPanel();
+            }
+        }
+
+        function closeLogin() {
+            document.getElementById('loginPanel').style.display = 'none';
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const showPasswordCheckbox = document.getElementById('showPassword');
+            
+            if (showPasswordCheckbox.checked) {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+
+        function attemptLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (username === 'admin' && password === 'Kejajar@52205') {
+                isAdminLoggedIn = true;
+                document.getElementById('loginPanel').style.display = 'none';
+                showAdminPanel();
+                errorMessage.style.display = 'none';
+            } else {
+                errorMessage.style.display = 'block';
+                // Clear password field
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'block';
+            loadFileList('csv');
+            loadFileList('pdf');
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').style.display = 'none';
+            // Optional: logout admin when closing panel
+            // isAdminLoggedIn = false;
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.admin-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function uploadFiles(type) {
+            const fileInput = document.getElementById(type + 'FileInput');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('Pilih file terlebih dahulu');
+                return;
+            }
+            
+            for (let file of files) {
+                // In a real implementation, you would upload to server
+                if (type === 'csv') {
+                    csvFiles[file.name] = file;
+                } else {
+                    pdfFiles[file.name] = file;
+                }
+            }
+            
+            loadFileList(type);
+            fileInput.value = '';
+            alert('File berhasil diupload');
+        }
+
+        function deleteFile(filename, type) {
+            if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
+                if (type === 'csv') {
+                    delete csvFiles[filename];
+                } else {
+                    delete pdfFiles[filename];
+                }
+                loadFileList(type);
+            }
+        }
+
+        function loadFileList(type) {
+            const fileListEl = document.getElementById(type + 'FileList');
+            const files = type === 'csv' ? csvFiles : pdfFiles;
+            
+            if (Object.keys(files).length === 0) {
+                fileListEl.innerHTML = '<p>Tidak ada file ' + type.toUpperCase() + '</p>';
+                return;
+            }
+            
+            let html = '';
+            Object.keys(files).forEach(filename => {
+                html += `
+                    <div class="file-item">
+                        <span>${filename}</span>
+                        <button class="delete-btn" onclick="deleteFile('${filename}', '${type}')">Hapus</button>
+                    </div>
+                `;
+            });
+            
+            fileListEl.innerHTML = html;
+        }
+
+        // Close popup
+        function closePopup() {
+            document.getElementById('noResultsPopup').style.display = 'none';
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Handle search again
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'searchBtn' && e.target.textContent === 'Cari Lagi') {
+                document.getElementById('searchForm').style.display = 'flex';
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('searchBtn').textContent = 'Cari';
+                document.getElementById('searchInput').value = '';
+            }
+        });
+
+        // Enter key for search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Enter key for login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const loginPanel = document.getElementById('loginPanel');
+                if (loginPanel.style.display === 'block') {
+                    attemptLogin();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
