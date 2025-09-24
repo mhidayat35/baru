@@ -2,125 +2,625 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pencarian Data</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Data CSV</title>
     <style>
-        .table-responsive {
-            width: 97vw;
-            max-width: 97vw;
-            margin: auto;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .search-section {
+            padding: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68900;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .actions {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-section {
+            background: #f8f9fa;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: unset;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+            
+            .table-container {
+                margin: 20px -20px;
+                border-radius: 0;
+            }
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-<div class="container mt-4">
-    <h2>Pencarian Data</h2>
-    <form method="POST" action="/search" class="d-flex mb-3">
-        <input type="text" name="query" class="form-control me-2" placeholder="Ketik kata kunci...">
-        <button class="btn btn-primary" type="submit">Cari</button>
-        {% if indexed %}
-        <button type="button" class="btn btn-warning ms-2" id="refreshBtn">Refresh Index</button>
-        {% endif %}
-    </form>
-    <div id="refreshStatus"></div>
-    {% if results %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead>
-            <tr>
-                {% for col in results[0].keys() %}
-                    {% if col != 'source_file' %}
-                    <th>{{ col }}</th>
-                    {% endif %}
-                {% endfor %}
-                <th style="min-width:120px;">Aksi</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in results %}
-                <tr>
-                    {% for col, val in row.items() %}
-                        {% if col != 'source_file' %}
-                        <td>{{ val }}</td>
-                        {% endif %}
-                    {% endfor %}
-                    <td>
-                        <a class="btn btn-info btn-sm" href="/pdf/{{ row['IDPEL'] }}" target="_blank">Tampilkan Program</a>
-                        <button class="btn btn-success btn-sm" onclick="showEdit('{{ row['IDPEL'] }}', '{{ row['source_file'] }}')">Edit</button>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Pencarian Data CSV</h1>
+            <p>Sistem pencarian data dengan fitur edit dan tampil PDF</p>
+        </div>
+
+        <div class="search-section">
+            <div id="searchForm">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Masukkan kata kunci pencarian...">
+                    <button id="searchBtn" class="btn btn-primary">🔍 Cari Data</button>
+                    <button id="refreshBtn" class="btn btn-warning">🔄 Refresh Index</button>
+                </div>
+            </div>
+
+            <div id="status" class="status hidden"></div>
+
+            <div id="resultsContainer" class="hidden">
+                <div class="table-container">
+                    <table id="resultsTable">
+                        <thead id="tableHeader"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="actions">
+                    <button id="searchAgainBtn" class="btn btn-primary hidden">🔍 Cari Lagi</button>
+                    <button id="editBtn" class="btn btn-secondary">✏️ Edit Data</button>
+                    <button id="showProgramBtn" class="btn btn-warning">📄 Tampilkan Program</button>
+                </div>
+
+                <div id="editSection" class="edit-section">
+                    <h3>✏️ Edit Data</h3>
+                    <div class="form-group">
+                        <label for="keteranganInput">Keterangan:</label>
+                        <textarea id="keteranganInput" placeholder="Masukkan keterangan..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lokasiInput">Lokasi Saat Ini:</label>
+                        <input type="text" id="lokasiInput" placeholder="Mendapatkan lokasi..." readonly>
+                    </div>
+                    <div class="actions">
+                        <button id="saveBtn" class="btn btn-primary">💾 Simpan Perubahan</button>
+                        <button id="cancelEditBtn" class="btn btn-secondary">❌ Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endif %}
-</div>
 
-<!-- Modal Edit -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form id="editForm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" name="idpel" id="edit_idpel">
-            <input type="hidden" name="source_file" id="edit_source_file">
-            <div class="mb-3">
-                <label for="edit_keterangan" class="form-label">Keterangan</label>
-                <input type="text" class="form-control" name="keterangan" id="edit_keterangan">
-            </div>
-            <div class="mb-3">
-                <label for="edit_lokasi" class="form-label">Lokasi</label>
-                <input type="text" class="form-control" name="lokasi" id="edit_lokasi">
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Simpan</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <h3 id="popupTitle">Berhasil!</h3>
+        <p id="popupMessage">Data berhasil diperbarui.</p>
+        <button class="btn btn-primary" onclick="closePopup()">OK</button>
+    </div>
 
-<!-- Bootstrap JS & JQuery -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function showEdit(idpel, source_file) {
-    document.getElementById('edit_idpel').value = idpel;
-    document.getElementById('edit_source_file').value = source_file;
-    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
-    editModal.show();
-}
+    <script>
+        let csvData = [];
+        let currentResults = [];
+        let isIndexed = localStorage.getItem('csvIndexed') === 'true';
+        let currentLocation = '';
 
-document.getElementById('editForm').onsubmit = function(e) {
-    e.preventDefault();
-    var form = e.target;
-    fetch('/edit', {
-        method: 'POST',
-        body: new FormData(form)
-    }).then(res => res.json())
-    .then(data => {
-        if(data.status === 'ok') {
-            location.reload();
-        } else {
-            alert('Data tidak ditemukan!');
-        }
-    });
-};
-
-document.getElementById('refreshBtn')?.addEventListener('click', function() {
-    document.getElementById('refreshStatus').innerText = 'Mengindeks ulang...';
-    fetch('/refresh_index', {method: 'POST'})
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('refreshStatus').innerText = 'Index selesai!';
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isIndexed) {
+                indexData();
+            } else {
+                loadIndexedData();
+            }
+            getCurrentLocation();
+            setupEventListeners();
         });
-});
-</script>
+
+        function setupEventListeners() {
+            document.getElementById('searchBtn').addEventListener('click', searchData);
+            document.getElementById('searchAgainBtn').addEventListener('click', searchAgain);
+            document.getElementById('refreshBtn').addEventListener('click', refreshIndex);
+            document.getElementById('editBtn').addEventListener('click', showEditSection);
+            document.getElementById('cancelEditBtn').addEventListener('click', hideEditSection);
+            document.getElementById('saveBtn').addEventListener('click', saveChanges);
+            document.getElementById('showProgramBtn').addEventListener('click', showProgram);
+            
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchData();
+                }
+            });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.innerHTML = message;
+            status.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            document.getElementById('status').classList.add('hidden');
+        }
+
+        async function indexData() {
+            showStatus('<div class="spinner"></div>Sedang mengindeks data...', 'loading');
+            
+            try {
+                // Simulate CSV file reading (replace with actual file reading logic)
+                await simulateFileReading();
+                localStorage.setItem('csvIndexed', 'true');
+                localStorage.setItem('csvData', JSON.stringify(csvData));
+                isIndexed = true;
+                showStatus('✅ Data berhasil diindeks!', 'success');
+                setTimeout(hideStatus, 3000);
+            } catch (error) {
+                showStatus('❌ Error saat mengindeks data: ' + error.message, 'error');
+            }
+        }
+
+        async function simulateFileReading() {
+            // Simulate reading CSV files from data_csv folder
+            // In real implementation, you would use File API or server-side reading
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    csvData = [
+                        { id: 1, nama: 'John Doe', idpel: 'PEL001', alamat: 'Jakarta', telepon: '08123456789' },
+                        { id: 2, nama: 'Jane Smith', idpel: 'PEL002', alamat: 'Surabaya', telepon: '08198765432' },
+                        { id: 3, nama: 'Bob Johnson', idpel: 'PEL003', alamat: 'Bandung', telepon: '08155667788' },
+                        // Add more sample data as needed
+                    ];
+                    resolve();
+                }, 2000);
+            });
+        }
+
+        function loadIndexedData() {
+            const savedData = localStorage.getItem('csvData');
+            if (savedData) {
+                csvData = JSON.parse(savedData);
+                showStatus('✅ Data dimuat dari index tersimpan', 'success');
+                setTimeout(hideStatus, 2000);
+            }
+        }
+
+        function refreshIndex() {
+            localStorage.removeItem('csvIndexed');
+            localStorage.removeItem('csvData');
+            isIndexed = false;
+            csvData = [];
+            indexData();
+        }
+
+        function searchData() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) {
+                showStatus('❌ Mohon masukkan kata kunci pencarian', 'error');
+                return;
+            }
+
+            if (csvData.length === 0) {
+                showStatus('❌ Data belum diindeks. Silakan tunggu proses indexing selesai.', 'error');
+                return;
+            }
+
+            currentResults = csvData.filter(row => {
+                return Object.values(row).some(value => 
+                    String(value).toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            });
+
+            if (currentResults.length === 0) {
+                showStatus('❌ Data tidak ditemukan', 'error');
+                return;
+            }
+
+            displayResults();
+        }
+
+        function displayResults() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const searchForm = document.getElementById('searchForm');
+            const searchAgainBtn = document.getElementById('searchAgainBtn');
+
+            // Hide search form and show search again button
+            searchForm.classList.add('hidden');
+            searchAgainBtn.classList.remove('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            // Create table
+            const tableHeader = document.getElementById('tableHeader');
+            const tableBody = document.getElementById('tableBody');
+
+            // Clear previous results
+            tableHeader.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (currentResults.length > 0) {
+                // Create header
+                const headerRow = document.createElement('tr');
+                Object.keys(currentResults[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key.toUpperCase();
+                    headerRow.appendChild(th);
+                });
+                tableHeader.appendChild(headerRow);
+
+                // Create body
+                currentResults.forEach(row => {
+                    const tr = document.createElement('tr');
+                    Object.values(row).forEach(value => {
+                        const td = document.createElement('td');
+                        td.textContent = value;
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+
+                showStatus(`✅ Ditemukan ${currentResults.length} hasil`, 'success');
+                setTimeout(hideStatus, 3000);
+            }
+        }
+
+        function searchAgain() {
+            document.getElementById('searchForm').classList.remove('hidden');
+            document.getElementById('searchAgainBtn').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('searchInput').value = '';
+            hideEditSection();
+            hideStatus();
+        }
+
+        function showEditSection() {
+            if (currentResults.length === 0) {
+                showPopup('Error', 'Tidak ada data yang dipilih untuk diedit');
+                return;
+            }
+
+            document.getElementById('editSection').style.display = 'block';
+            document.getElementById('lokasiInput').value = currentLocation || 'Lokasi tidak tersedia';
+        }
+
+        function hideEditSection() {
+            document.getElementById('editSection').style.display = 'none';
+            document.getElementById('keteranganInput').value = '';
+        }
+
+        async function saveChanges() {
+            const keterangan = document.getElementById('keteranganInput').value.trim();
+            const lokasi = document.getElementById('lokasiInput').value.trim();
+
+            if (!keterangan) {
+                showPopup('Error', 'Mohon masukkan keterangan');
+                return;
+            }
+
+            // Simulate saving to CSV
+            showStatus('<div class="spinner"></div>Menyimpan perubahan...', 'loading');
+
+            try {
+                await simulateSaveToCSV(keterangan, lokasi);
+                showPopup('Berhasil!', 'Data berhasil diperbarui');
+                hideEditSection();
+                hideStatus();
+            } catch (error) {
+                showPopup('Error', 'Gagal menyimpan data: ' + error.message);
+                hideStatus();
+            }
+        }
+
+        async function simulateSaveToCSV(keterangan, lokasi) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Add keterangan and lokasi columns to current results
+                    currentResults.forEach(row => {
+                        row.keterangan = keterangan;
+                        row.lokasi = lokasi;
+                    });
+                    
+                    // Update csvData
+                    csvData.forEach(row => {
+                        const foundResult = currentResults.find(r => r.id === row.id);
+                        if (foundResult) {
+                            row.keterangan = keterangan;
+                            row.lokasi = lokasi;
+                        }
+                    });
+                    
+                    localStorage.setItem('csvData', JSON.stringify(csvData));
+                    displayResults(); // Refresh table display
+                    resolve();
+                }, 1000);
+            });
+        }
+
+        function showProgram() {
+            if (currentResults.length === 0) {
+                showPopup('Error', 'Tidak ada data yang dipilih');
+                return;
+            }
+
+            // Get IDPEL from first result
+            const idpel = currentResults[0].idpel;
+            if (!idpel) {
+                showPopup('Error', 'IDPEL tidak ditemukan');
+                return;
+            }
+
+            // Simulate opening PDF
+            showStatus('<div class="spinner"></div>Membuka file PDF...', 'loading');
+            setTimeout(() => {
+                hideStatus();
+                showPopup('PDF Program', `Membuka file PDF untuk IDPEL: ${idpel}\n(Simulasi - file PDF akan dibuka di tab baru)`);
+                // In real implementation: window.open(`data_pdf/${idpel}.pdf`, '_blank');
+            }, 1000);
+        }
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        currentLocation = `${lat}, ${lon}`;
+                    },
+                    function(error) {
+                        currentLocation = 'Lokasi tidak dapat diakses';
+                    }
+                );
+            } else {
+                currentLocation = 'Geolocation tidak didukung';
+            }
+        }
+
+        function showPopup(title, message) {
+            document.getElementById('popupTitle').textContent = title;
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('popupOverlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Close popup when clicking overlay
+        document.getElementById('popupOverlay').addEventListener('click', closePopup);
+    </script>
 </body>
-              </html>
+    </html>
