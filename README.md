@@ -1,2 +1,2 @@
 # baru
-cek ken
+cek disini https://mhidayat35.github.io/baru/
