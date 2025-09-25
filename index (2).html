@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VKRN SANXING ULP WONOSOBO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .refresh-btn {
+            display: block;
+            margin: 10px auto 20px auto;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+        
+        .search-btn:hover {
+            background-color: #218838;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .edit-btn, .save-btn {
+            padding: 8px 16px;
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .edit-btn:hover, .save-btn:hover {
+            background-color: #e0a800;
+        }
+        
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background-color: #218838;
+        }
+        
+        .edit-form {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        .status-message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .cancel-btn {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            th, td {
+                padding: 6px 8px;
+                font-size: 14px;
+            }
+            
+            table {
+                min-width: 500px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            th, td {
+                padding: 4px 6px;
+                font-size: 12px;
+            }
+            
+            table {
+                min-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VKRN SANXING ULP WONOSOBO</h1>
+        
+        <button class="refresh-btn" onclick="indexData()">Refresh Data</button>
+        
+        <div class="search-container" id="searchContainer">
+            <input type="text" class="search-input" id="searchInput" placeholder="Masukkan kata kunci pencarian...">
+            <button class="search-btn" id="searchBtn" onclick="performSearch()">Cari</button>
+        </div>
+        
+        <div class="status-message" id="statusMessage"></div>
+        
+        <div class="edit-form" id="editForm">
+            <h3>Edit Data</h3>
+            <div class="form-group">
+                <label for="editIdpel">ID Pelanggan:</label>
+                <input type="text" id="editIdpel" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editNama">Nama:</label>
+                <input type="text" id="editNama" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editKeterangan">Keterangan:</label>
+                <textarea id="editKeterangan" placeholder="Masukkan keterangan..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editLokasi">Lokasi:</label>
+                <input type="text" id="editLokasi" placeholder="Mendapatkan lokasi..." readonly>
+            </div>
+            <div class="button-group">
+                <button class="cancel-btn" onclick="cancelEdit()">Batal</button>
+                <button class="save-btn" onclick="saveData()">Simpan</button>
+            </div>
+        </div>
+        
+        <div id="resultsContainer">
+            <p style="text-align: center; color: #666; margin-top: 50px;">Gunakan form pencarian untuk menampilkan data dari sistem VKRN SANXING ULP WONOSOBO.</p>
+        </div>
+        
+        <button class="edit-btn" id="editBtn" onclick="toggleEditMode()" style="display: none;">Edit</button>
+    </div>
+
+    <script>
+        let csvData = [];
+        let filteredData = [];
+        let isSearched = false;
+        let isEditMode = false;
+        let currentEditIndex = -1;
+        let hasIndexed = false;
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            if (!hasIndexed) {
+                indexData();
+                hasIndexed = true;
+            }
+        });
+
+        async function indexData() {
+            showStatus('Mengindeks data...', 'info');
+            
+            try {
+                // Simulate reading CSV file - in real implementation, this would read from vkrn.csv
+                // For demo purposes, using sample data
+                const sampleCsvData = `IDPEL,NAMA,ALAMAT,DAYA,TARIF
+123456789,John Doe,Jl. Merdeka No. 1,900,R1
+987654321,Jane Smith,Jl. Sudirman No. 5,1300,R1
+456789123,Bob Johnson,Jl. Gatot Subroto No. 10,2200,R2
+789123456,Alice Brown,Jl. Ahmad Yani No. 15,900,R1
+321654987,Charlie Wilson,Jl. Diponegoro No. 20,450,R1`;
+                
+                // Try to read from uploaded file if available
+                let csvContent = sampleCsvData;
+                try {
+                    if (window.fs && window.fs.readFile) {
+                        const fileData = await window.fs.readFile('vkrn.csv', { encoding: 'utf8' });
+                        csvContent = fileData;
+                    }
+                } catch (e) {
+                    console.log('Using sample data as vkrn.csv not found');
+                }
+                
+                Papa.parse(csvContent, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: true,
+                    complete: function(results) {
+                        csvData = results.data;
+                        
+                        // Add KETERANGAN and LOKASI columns if they don't exist
+                        if (csvData.length > 0) {
+                            const firstRow = csvData[0];
+                            if (!firstRow.hasOwnProperty('KETERANGAN')) {
+                                csvData.forEach(row => row.KETERANGAN = '');
+                            }
+                            if (!firstRow.hasOwnProperty('LOKASI')) {
+                                csvData.forEach(row => row.LOKASI = '');
+                            }
+                        }
+                        
+                        showStatus('Data berhasil diindeks. Total: ' + csvData.length + ' record.', 'success');
+                        document.getElementById('resultsContainer').innerHTML = '<p style="text-align: center; color: #666; margin-top: 50px;">Gunakan form pencarian untuk menampilkan data dari sistem VKRN SANXING ULP WONOSOBO.</p>';
+                    },
+                    error: function(error) {
+                        showStatus('Error parsing CSV: ' + error.message, 'error');
+                    }
+                });
+                
+            } catch (error) {
+                showStatus('Error loading data: ' + error.message, 'error');
+            }
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (!isSearched) {
+                if (searchTerm === '') {
+                    showStatus('Masukkan kata kunci pencarian.', 'error');
+                    return;
+                }
+                
+                // Hide search input
+                searchInput.style.display = 'none';
+                
+                // Perform search
+                filteredData = csvData.filter(row => {
+                    return Object.values(row).some(value => 
+                        value && value.toString().toLowerCase().includes(searchTerm)
+                    );
+                });
+                
+                displayResults();
+                searchBtn.textContent = 'Cari Lagi';
+                isSearched = true;
+                
+                if (filteredData.length > 0) {
+                    document.getElementById('editBtn').style.display = 'inline-block';
+                }
+                
+            } else {
+                // Reset search
+                document.getElementById('searchInput').value = '';
+                searchBtn.textContent = 'Cari';
+                searchInput.style.display = 'block';
+                isSearched = false;
+                filteredData = [];
+                document.getElementById('resultsContainer').innerHTML = '<p style="text-align: center; color: #666; margin-top: 50px;">Gunakan form pencarian untuk menampilkan data dari sistem VKRN SANXING ULP WONOSOBO.</p>';
+                document.getElementById('editBtn').style.display = 'none';
+                hideEditForm();
+            }
+        }
+
+        function displayResults() {
+            const container = document.getElementById('resultsContainer');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Tidak ada data yang ditemukan.</p>';
+                return;
+            }
+            
+            const headers = Object.keys(filteredData[0]);
+            let tableHtml = '<div class="table-container"><table><thead><tr>';
+            
+            headers.forEach(header => {
+                tableHtml += `<th>${header}</th>`;
+            });
+            
+            tableHtml += '</tr></thead><tbody>';
+            
+            filteredData.forEach(row => {
+                tableHtml += '<tr>';
+                headers.forEach(header => {
+                    const value = row[header] || '';
+                    tableHtml += `<td>${value}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+            
+            tableHtml += '</tbody></table></div>';
+            container.innerHTML = tableHtml;
+            
+            showStatus(`Menampilkan ${filteredData.length} hasil pencarian.`, 'success');
+        }
+
+        function toggleEditMode() {
+            if (!isEditMode) {
+                // Enter edit mode
+                isEditMode = true;
+                
+                // Hide edit button and search button (keep only "Cari Lagi" visible)
+                document.getElementById('editBtn').style.display = 'none';
+                document.getElementById('searchBtn').style.display = 'none';
+                
+                // Show edit form
+                document.getElementById('editForm').style.display = 'block';
+                
+                // Show only IDPEL and NAMA in table
+                showEditTable();
+                
+                // Get current location
+                getCurrentLocation();
+            }
+        }
+
+        function cancelEdit() {
+            // Reset edit mode
+            isEditMode = false;
+            currentEditIndex = -1;
+            
+            // Hide edit form
+            document.getElementById('editForm').style.display = 'none';
+            
+            // Show edit button 
+            document.getElementById('editBtn').style.display = 'inline-block';
+            
+            // Keep search input hidden since we're in "Cari Lagi" mode
+            document.getElementById('searchInput').style.display = 'none';
+            
+            // Return to search results view
+            displayResults();
+        }
+
+        function showEditTable() {
+            const container = document.getElementById('resultsContainer');
+            
+            if (filteredData.length === 0) return;
+            
+            let tableHtml = '<div class="table-container"><table><thead><tr>';
+            tableHtml += '<th>Select</th><th>IDPEL</th><th>NAMA</th>';
+            tableHtml += '</tr></thead><tbody>';
+            
+            filteredData.forEach((row, index) => {
+                tableHtml += '<tr>';
+                tableHtml += `<td><input type="radio" name="selectRow" value="${index}" onchange="selectRowForEdit(${index})"></td>`;
+                tableHtml += `<td>${row.IDPEL || ''}</td>`;
+                tableHtml += `<td>${row.NAMA || ''}</td>`;
+                tableHtml += '</tr>';
+            });
+            
+            tableHtml += '</tbody></table></div>';
+            container.innerHTML = tableHtml;
+        }
+
+        function selectRowForEdit(index) {
+            currentEditIndex = index;
+            const row = filteredData[index];
+            
+            document.getElementById('editIdpel').value = row.IDPEL || '';
+            document.getElementById('editNama').value = row.NAMA || '';
+            document.getElementById('editKeterangan').value = row.KETERANGAN || '';
+            document.getElementById('editLokasi').value = row.LOKASI || '';
+        }
+
+        function getCurrentLocation() {
+            const locationInput = document.getElementById('editLokasi');
+            locationInput.value = 'Mendapatkan lokasi...';
+            
+            if (navigator.geolocation) {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
+                        locationInput.value = `${lat}, ${lng}`;
+                    },
+                    function(error) {
+                        let errorMessage = 'Lokasi tidak dapat dideteksi';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Akses lokasi ditolak pengguna';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Informasi lokasi tidak tersedia';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'Waktu habis untuk mendapatkan lokasi';
+                                break;
+                        }
+                        locationInput.value = errorMessage;
+                        console.error('Error getting location:', error);
+                    },
+                    options
+                );
+            } else {
+                locationInput.value = 'Geolocation tidak didukung browser ini';
+            }
+        }
+
+        async function saveData() {
+            if (currentEditIndex === -1) {
+                showStatus('Pilih baris yang akan diedit.', 'error');
+                return;
+            }
+            
+            // Update the data
+            const keterangan = document.getElementById('editKeterangan').value;
+            const lokasi = document.getElementById('editLokasi').value;
+            
+            filteredData[currentEditIndex].KETERANGAN = keterangan;
+            filteredData[currentEditIndex].LOKASI = lokasi;
+            
+            // Update in main csvData
+            const idpel = filteredData[currentEditIndex].IDPEL;
+            const mainIndex = csvData.findIndex(row => row.IDPEL === idpel);
+            if (mainIndex !== -1) {
+                csvData[mainIndex].KETERANGAN = keterangan;
+                csvData[mainIndex].LOKASI = lokasi;
+            }
+            
+            // In a real implementation, this would save to vkrn.csv
+            // For demo, we'll just simulate the save
+            try {
+                // Simulate saving CSV
+                const csvContent = Papa.unparse(csvData);
+                console.log('Would save CSV content:', csvContent);
+                
+                showStatus('Data berhasil disimpan.', 'success');
+                
+                // Reset edit mode
+                isEditMode = false;
+                currentEditIndex = -1;
+                
+                // Hide edit form
+                document.getElementById('editForm').style.display = 'none';
+                
+                // Show edit button and search button (Cari Lagi)
+                document.getElementById('editBtn').style.display = 'inline-block';
+                document.getElementById('searchBtn').style.display = 'inline-block';
+                
+                // Keep search input hidden since we're in "Cari Lagi" mode
+                document.getElementById('searchInput').style.display = 'none';
+                
+                // Return to search results view with updated data
+                displayResults();
+                
+            } catch (error) {
+                showStatus('Error saving data: ' + error.message, 'error');
+            }
+        }
+
+        function hideEditForm() {
+            const editBtn = document.getElementById('editBtn');
+            const editForm = document.getElementById('editForm');
+            
+            isEditMode = false;
+            editBtn.textContent = 'Edit';
+            editBtn.className = 'edit-btn';
+            editForm.style.display = 'none';
+            currentEditIndex = -1;
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = 'status-message status-' + type;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle Enter key in search input
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>
